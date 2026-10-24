@@ -16,11 +16,11 @@ class Customer:
         self.acc_no = input("Enter Account Number: ")
         self.USR["User"] = {"CID": self.cid, "Cname": self.cname, "acc_no": self.acc_no, "Credit Cards": self.credit_card, "Balance": self.balance}
     def display_customer(self):
-        print(self.cid)
-        print(self.cname)
-        print(self.acc_no)
-        print(self.balance)
-        print(self.credit_card)
+        print("User ID: "+self.cid)
+        print("User Name: "+self.cname)
+        print("User Account Number: "+self.acc_no)
+        print("User Balance: "+self.balance)
+        print("User's Credit Cards: "+self.credit_card)
     def assign_card(self, creditC):
         self.credit_card.append(creditC)
         for i in range(len(RCL)):
@@ -58,10 +58,10 @@ class Card:
         self.balance = int(input("Enter Card Balance: "))
         self.CRD["Card"] = {"Card Num": self.card_no, "CVV": self.cvv, "Expiry Date": self.expiry_date, "Balance": self.balance}
     def display_card(self):
-        print(self.card_no)
-        print(self.cvv)
-        print(self.expiry_date)
-        print(self.balance)
+        print("Card Number: "+self.card_no)
+        print("Card CVV: "+self.cvv)
+        print("Card Expiration Date: "+self.expiry_date)
+        print("Card Balance: "+self.balance)
 
 while True:
     print("")
