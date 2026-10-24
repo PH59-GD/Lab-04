@@ -8,13 +8,13 @@ class Customer:
         self.acc_no = ""
         self.balance = ""
         self.credit_card = []
-        self.transfer_funds = ""
+        #self.transfer_funds = ""
         self.USR = {}
     def create_customer(self):
         self.cid = input("Enter Customer ID: ")
         self.cname = input("Enter Customer Name: ")
         self.acc_no = input("Enter Account Number: ")
-        self.USR["User"+str(len(RL))] = {"CID": self.cid, "Cname": self.cname, "acc_no": self.acc_no, "Credit Cards": self.credit_card}
+        self.USR["User"] = {"CID": self.cid, "Cname": self.cname, "acc_no": self.acc_no, "Credit Cards": self.credit_card, "Balance": self.balance}
     def display_customer(self):
         print(self.cid)
         print(self.cname)
@@ -23,9 +23,25 @@ class Customer:
         print(self.credit_card)
     def assign_card(self, creditC):
         self.credit_card.append(creditC)
-        self.balance = creditC.CRD["Card"]["Balance"]
+        for i in range(len(RCL)):
+            if (RCL[i].card_no == creditC):
+                self.balance = RCL[i].balance
 
-    #def transfer_funds(self, Transfer_to_Account, Amount):
+    def transfer_funds(self, Transfer_to_Account, Amount, SAccount_Num, CardOP):
+        for i in range(len(RCL)):
+                if (RL[i].cid == SAccount_Num):
+                    for b in range(len(RCL)):
+                        if (RCL[b].card_no == RL[i].credit_card[CardOP]):
+                            RCL[b].balance -= Amount
+                            RL[i].balance = RCL[b].balance
+                            for c in range(len(RL)):
+                                if (RL[c].cid == Transfer_to_Account):
+                                    RL[c].balance += Amount
+                                    for d in range(len(RCL)):
+                                        if (RCL[d].card_no == RL[c].credit_card[CardOP]):
+                                            RCL[d].balance += Amount
+                        
+                    
         
 
 class Card:
@@ -40,41 +56,13 @@ class Card:
         self.cvv = input("Enter CVV Number: ")
         self.expiry_date = input("Enter Card expiration(EX: 01/26): ")
         self.balance = int(input("Enter Card Balance: "))
-        self.CRD["Card"+str(len(RCL))] = {"Card Num": self.card_no, "CVV": self.cvv, "Expiry Date": self.expiry_date, "Balance": self.balance}
+        self.CRD["Card"] = {"Card Num": self.card_no, "CVV": self.cvv, "Expiry Date": self.expiry_date, "Balance": self.balance}
     def display_card(self):
         print(self.card_no)
         print(self.cvv)
         print(self.expiry_date)
         print(self.balance)
-try:
-    File3 = open("Customers.dat", "rb")
-    while True:
-        try:
-            data = pickle.load(File3)
-            #print(data.USR)
-            RL.append(data.USR)
-        except(EOFError):
-            break
-    File3.close()
-except(FileNotFoundError):
-    print("")
-    print("WARNING! ''Customers.dat'' not found!")
-    print("You must create a user!")
-    
-try:
-    File6 = open("Cards.dat", "rb")
-    while True:
-        try:
-            data = pickle.load(File6)
-            #print(data.USR)
-            RCL.append(data.CRD)
-        except(EOFError):
-            break
-    File6.close()
-except(FileNotFoundError):
-    print("")
-    print("WARNING! ''Cards.dat'' not found!")
-    print("You must create a card!")
+
 while True:
     print("")
     print("[1] Customer")
@@ -94,43 +82,25 @@ while True:
             if(UI == "1"):
                 NUser = Customer()
                 NUser.create_customer()
-                File1 = open("Customers.dat", "ab")
-                pickle.dump(NUser, File1)
-                File1.close()
-                try:
-                    File9 = open("Customers.dat", "rb")
-                    RL = []
-                    while True:
-                        try:
-                            data = pickle.load(File9)
-                            #print(data.USR)
-                            RL.append(data.USR)
-                        except(EOFError):
-                            break
-                    File9.close()
-                    #print(RL)
-                except(FileNotFoundError):
-                    print("Error!")
-            elif(UI == "4"):
-                break
+                RL.append(NUser)
             elif(UI == "2"):
+                UI = input("Enter Customer ID: ")
+                for i in range(len(RL)):
+                    if (RL[i].cid == UI):
+                        print(RL[i].display_customer())
+            elif(UI == "3"):
+                SA = input("Enter your Customer ID: ")
+                TTA = input("Enter Customer ID you wish to transfer money to: ")
+                A = int(input("Enter the amount you wish to transfer: "))
+                CO = int(input("Which card do you wish to use?(EX: 0 for first card, 1 for second card, etc.): "))
+                for i in range(len(RL)):
+                    if (RL[i].cid == SA):
+                        print(RL[i])
+                        RL[i].transfer_funds(TTA, A, SA, CO)
                 
-                try:
-                    File2 = open("Customers.dat", "rb")
-                    RL = []
-                    while True:
-                        try:
-                            data = pickle.load(File2)
-                            print(data.USR)
-                            RL.append(data.USR)
-                        except(EOFError):
-                            break
-                    File2.close()
-                    #print(RL)
-                except(FileNotFoundError):
-                    print("No Customers to display!")
             elif(UI == "4"):
                 break
+            
             
 
     elif(UC == "2"):
@@ -145,73 +115,45 @@ while True:
             if(UI == "1"):
                 NCard = Card()
                 NCard.create_card()
-                File4 = open("Cards.dat", "ab")
-                pickle.dump(NCard, File4)
-                File4.close()
-                try:
-                    File10 = open("Cards.dat", "rb")
-                    RL = []
-                    while True:
-                        try:
-                            data = pickle.load(File10)
-                            #print(data.USR)
-                            RCL.append(data.CRD)
-                        except(EOFError):
-                            break
-                    File10.close()
-                    #print(RL)
-                except(FileNotFoundError):
-                    print("ERROR!")
+                RCL.append(NCard)
+                
+                
             elif(UI == "2"):
-                try:
-                    File5 = open("Cards.dat", "rb")
-                    RCL = []
-                    while True:
-                        try:
-                            data = pickle.load(File5)
-                            print(data.CRD)
-                            RCL.append(data.CRD)
-                        except(EOFError):
-                            break
-                    File5.close()
-                    #print(RL)
-                except(FileNotFoundError):
-                    print("No Cards to display!")
+                UI = input("Enter Card Number: ")
+                for i in range(len(RCL)):
+                    if (RCL[i].card_no == UI):
+                        print(RCL[i].display_card())
             elif(UI == "3"):
-                US = input("Enter Customer ID: ")
                 UCS = input("Enter Card Number: ")
+                UI = input("Enter Customer ID: ")
                 for i in range(len(RL)):
-                    if(RL[i]["User"+str(i)]["CID"] == US):
-                        print("1")
+                    if (RL[i].cid == UI):
                         for b in range(len(RCL)):
-                            print("2")
-                            if(RCL[b]["Card"+str(b)]["Card Num"] == UCS):
-                                print("3")
-                                #RL[i]["User"+str(i+1)]["Credit Cards"].append(RCL[b]["Card"+str(b+1)]["Card Num"])
+                            if (RCL[b].card_no == UCS):
+                                RL[i].assign_card(UCS)
                                 
-                                File7 = open("Customers.dat", "rb")
-                                #while True:
-                                    #try:
-                                data = pickle.load(File7)
-                                for c in range(len(RL)):
-                                    print("4")
-                                    if(data.USR["User"+str(c)]["CID"] == US):
-                                        print("5")
-                                        
-                                        data.USR["User"+str(i)]["Credit Cards"].append(RCL[b]["Card"+str(b)]["Card Num"])
-                                        print(data.USR["User"+str(i)]["Credit Cards"])
-                                        #print(RL[i]["User"+str(i)]["Credit Cards"].append(RCL[b]["Card"+str(b)]["Card Num"]))
-                                        File8 = open("Customers.dat", "wb")
-                                        pickle.dump(data, File8)
-                                        File8.close()
-                                        
-                                #RL.append(data.USR)
                                 
-                            #except(EOFError):
-                                #break
-                                File7.close()
             elif(UI == "4"):
                 break
                                 
     elif(UC == "4"):
         break
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
